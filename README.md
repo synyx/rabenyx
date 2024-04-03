@@ -1,3 +1,10 @@
+> [!CAUTION]
+> This repository is no longer maintained. It is published as part of the synyx
+> history and it provides a full picture together with its corresponding blog posts:
+> * https://synyx.de/blog/die-geschichte-vom-rabenyx-teil-1-organisation/
+> * https://synyx.de/blog/die-geschichte-vom-rabenyx-teil-2-entwicklung/
+> * https://synyx.de/blog/die-geschichte-vom-rabenyx-teil-3-open-source/
+
 # Rabenyx
 
 An ally for the fight against the chaos of Corona organisation at synyx. It is
