@@ -1,0 +1,103 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabenyx
+  namespace: rabenyx
+spec:
+  selector:
+    name: rabenyx
+  ports:
+  - name: flask
+    protocol: TCP
+    port: 5000
+    targetPort: 5000
+  - name: oauth2-proxy
+    protocol: TCP
+    port: 5001
+    targetPort: 5001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabenyx
+  namespace: rabenyx
+  labels:
+    name: rabenyx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rabenyx
+  template:
+    metadata:
+      labels:
+        name: rabenyx
+    spec:
+      containers:
+      - name: rabenyx
+        image: registry.example.com/rabenyx:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: "1000Mi"
+            cpu: "1"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 2
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 2
+          timeoutSeconds: 5
+        env:
+        - name: NEXTCLOUD_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-api-credentials
+              key: username
+        - name: NEXTCLOUD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-api-credentials
+              key: password
+        - name: NEXTCLOUD_URL
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-api-credentials
+              key: url
+        envFrom:
+        - secretRef:
+            name: nextcloud-db-credentials
+      - name: oauth2-proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.2.0
+        args:
+        - --provider=keycloak-oidc
+        - --oidc-issuer-url=https://login.example.com/auth/realms/rabenyx
+        - --upstream=http://127.0.0.1:5000
+        - --redirect-url=https://rabenyx.example.com/oauth2/callback
+        - --allowed-role=rabenyx-user
+        - --http-address=http://$(POD_IP):5001
+        - --email-domain=*
+        - --reverse-proxy=true
+        - --real-client-ip-header=X-Forwarded-For
+        ports:
+        - containerPort: 5001
+          name: oauth2-proxy
+          protocol: TCP
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        envFrom:
+        - secretRef:
+            name: rabenyx-oauth2-proxy
+      imagePullSecrets:
+      - name: registry.example.com

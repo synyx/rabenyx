@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "regexManagers": [
+    {
+      "fileMatch": ["^deploy/*.ya?ml$"],
+      "matchStrings": [
+        "image: (registry.example.com/)?(?<depName>(quay.io|gh?cr.io|docker.io).*):(?<currentValue>.*)$"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ]
+}

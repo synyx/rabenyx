@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Umfragen{% endblock %}
+
+{% block content %}
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>Umfrage</th>
+        </tr>
+        {% for poll in polls %}
+        <tr>
+            <td>
+                {% set today_styling = 'text-bold text-italic' if today in poll.title %}
+                <a href="polls/{{ poll.id }}" class="{{ today_styling }}">{{ poll.title }}</a>
+                {% if today_styling %}<span class="label">HEUTE</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

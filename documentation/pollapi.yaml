@@ -1,0 +1,418 @@
+---
+openapi: 3.0.1
+info:
+  title: Nextcloud Poll API
+  version: 1.0.0
+servers:
+- url: https://nextcloud.example.com/index.php/apps/polls/api/v1.0
+
+paths:
+  /polls:
+    get:
+      summary: Lists Polls
+      operationId: getPolls
+      security:
+      - basicAuth: []
+      tags:
+      - poll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polls'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll:
+    post:
+      summary: Add new Poll
+      operationId: createPoll
+      security:
+      - basicAuth: []
+      tags:
+      - poll
+      requestBody:
+        description: Poll object that should be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poll'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polls'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll/{pollId}:
+    get:
+      summary: Get a Poll
+      operationId: getPoll
+      security:
+      - basicAuth: []
+      tags:
+      - poll
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: Update a Poll
+      operationId: updatePoll
+      security:
+      - basicAuth: []
+      tags:
+      - poll
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      requestBody:
+        description: Partial Poll object specifying the fields to change
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPoll'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polls'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll/{pollId}/clone:
+    post:
+      summary: Clone a Poll
+      operationId: clonePoll
+      security:
+      - basicAuth: []
+      tags:
+      - poll
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polls'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll/{pollId}/votes:
+    get:
+      summary: Get Votes for a Poll
+      operationId: getVotes
+      security:
+      - basicAuth: []
+      tags:
+      - vote
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Votes'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /vote:
+    post:
+      summary: Add Vote to a Poll
+      operationId: createVote
+      security:
+      - basicAuth: []
+      tags:
+      - vote
+      requestBody:
+        description: Option to add to poll
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetVote'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Votes'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll/{pollId}/options:
+    get:
+      summary: Get Options for a Poll
+      operationId: getOption
+      security:
+      - basicAuth: []
+      tags:
+      - option
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Options'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /poll/{pollId}/option:
+    post:
+      summary: Add Option to a Poll
+      operationId: createOption
+      security:
+      - basicAuth: []
+      tags:
+      - option
+      parameters:
+      - in: path
+        name: pollId
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the Poll
+      requestBody:
+        description: Option to add to poll
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetOption'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Options'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /share:
+    post:
+      summary: Add an email share to a poll
+      operationId: createShare
+      security:
+      - basicAuth: []
+      tags:
+      - share
+      requestBody:
+        description: Share to add to poll
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetShare'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  schemas:
+    Poll:
+      required:
+      - type
+      - title
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          example: textPoll
+        title:
+          type: string
+          example: eggplant
+        expire:
+          type: integer
+          format: int64
+          example: 1632743039
+        access:
+          type: string
+          enum: [hidden, public]
+    SetPoll:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          example: textPoll
+        title:
+          type: string
+          example: eggplant
+        expire:
+          type: integer
+          format: int64
+          example: 1632743039
+        access:
+          type: string
+          enum: [hidden, public]
+    Polls:
+      type: object
+      properties:
+        polls:
+          type: array
+          items:
+            $ref: '#/components/schemas/Poll'
+    PollResponse:
+      type: object
+      properties:
+        poll:
+          $ref: '#/components/schemas/Poll'
+
+    Vote:
+      required:
+      - userId
+      - title
+      type: object
+      properties:
+        userId:
+          type: string
+          example: manfred
+        title:
+          type: string
+          example: eggplant
+    Votes:
+      type: object
+      properties:
+        polls:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vote'
+    SetVote:
+      required:
+      - optionId
+      - setTo
+      type: object
+      properties:
+        optionId:
+          type: integer
+          format: int64
+        setTo:
+          type: string
+          enum: ["yes", "no"]
+    Option:
+      required:
+      - pollId
+      - text
+      type: object
+      properties:
+        pollId:
+          type: integer
+          format: int64
+          example: 7
+        text:
+          type: string
+          example: eggplant
+    SetOption:
+      required:
+      - pollOptionText
+      type: object
+      properties:
+        pollOptionText:
+          type: string
+    Options:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+
+    # Shares
+    SetShare:
+      required:
+      - pollId
+      - userId
+      type: object
+      properties:
+        pollId:
+          type: integer
+          format: int64
+          example: 4
+        userId:
+          type: string
+          example: someone
+    Share:
+      type: object
+      properties:
+        token:
+          type: string
+          example: dPR9jX3uxaqXXRPY
+        type:
+          type: string
+          example: email
+        pollId:
+          type: integer
+          format: int64
+          example: 4
+        userId:
+          type: string
+          example: someone
+    ShareResponse:
+      type: object
+      properties:
+        share:
+          $ref: '#/components/schemas/Share'
+
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+security:
+- basicAuth: []

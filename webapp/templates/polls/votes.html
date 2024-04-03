@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Abgegebene Stimmen{% endblock %}
+
+{% block content %}
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="text-align: left;">Name</th>
+            <th style="text-align: left;">Buchung</th>
+            <th></th>
+        </tr>
+        <tr>
+            <form action="/{{ poll_id }}/votes/add" method="post">
+                <div class="form-group">
+                    <td>
+                        <input class="form-input" type="text" name="user_id" required>
+                    </td>
+                    <td>
+                        <select class="form-select" name="option_id" required>
+                            {% for option in options %}
+                            <option value="{{ option.id }}">{{ option.text }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn" onclick="this.form.submit()">Hinzufügen</button>
+                    </td>
+                </div>
+            </form>
+        </tr>
+        {% for vote in votes %}
+            {% if vote.answer == "yes" %}
+            <tr>
+                <td>{{ vote.user.displayName }}</td>
+                <td>{{ vote.optionText }}</td>
+                <td>
+                    <form action="/votes/{{ vote.id }}" method="post">
+                        <div class="form-group">
+                        <label class="form-switch" onChange="this.form.submit()">
+                            <input type="checkbox" checked>
+                            <i class="form-icon"></i>
+                            <input type="hidden" name="action" value="delete">
+                        </label>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+
+    <br><br>
+    <h3>Herausgenommen</h3>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="text-align: left;">Name</th>
+            <th style="text-align: left;">Buchung</th>
+            <th></th>
+        </tr>
+        {% for vote in votes %}
+            {% if vote.answer == "no" %}
+            <tr>
+                <td>{{ vote.user.displayName }}</td>
+                <td>{{ vote.optionText }}</td>
+                <td>
+                    <form action="/votes/{{ vote.id }}" method="post">
+                        <label class="form-switch" onChange="this.form.submit()">
+                            <input type="checkbox">
+                            <i class="form-icon"></i>
+                            <input type="hidden" name="action" value="recover">
+                        </label>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+
+{% endblock %}

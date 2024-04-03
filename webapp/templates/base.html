@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='spectre.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.ico') }}" id="favicon" data-original-href="{{ url_for('static', filename='logos/favicon.ico') }}" />
+    <meta charset="UTF-8">
+    <title>{% block title %}Rabenyx{% endblock %}</title>
+</head>
+<body>
+<header class="navbar">
+    <section class="navbar-section">
+        <a href="/" class="navbar-brand text-light text-uppercase">
+            Rabenyx
+        </a>
+    </section>
+    <section class="navbar-section">
+        <span class="text-secondary text-tiny">powered by</span>
+        <a href="/" class="navbar-brand">
+            {% set year = ['2002','2004','2012','2019','2021']|random %}
+            <img src="{{ url_for('static', filename='logos/synyx_logo_'+year+'.png') }}" alt="home"/>
+        </a>
+    </section>
+</header>
+<section class="content">
+    {% block content required %}{% endblock %}
+</section>
+</body>
+</html>

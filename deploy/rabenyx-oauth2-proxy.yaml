@@ -1,0 +1,17 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: rabenyx-oauth2-proxy
+  namespace: rabenyx
+spec:
+  encryptedData:
+    OAUTH2_PROXY_CLIENT_ID:
+    OAUTH2_PROXY_CLIENT_SECRET:
+    OAUTH2_PROXY_COOKIE_SECRET:
+  template:
+    metadata:
+      name: rabenyx-oauth2-proxy
+      namespace: rabenyx
+    type: Opaque

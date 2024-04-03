@@ -1,0 +1,17 @@
+# Taken from .gitignore
+.idea
+.pytest_cache
+*.egg-info/
+__pycache__/
+
+# Additional ignores
+tests/
+documentation/
+venv/
+.dockerignore
+.git/
+.gitignore
+.gitlab-ci.yml
+Dockerfile
+README.md
+renovate.json

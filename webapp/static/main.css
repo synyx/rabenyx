@@ -1,0 +1,10 @@
+.navbar { height: 2.5rem; background-color: #222222; }
+
+.navbar-brand img {
+    padding-left: 1rem;
+    padding-top: 0.2rem;
+    max-height: 1.5rem;
+}
+
+/* Add padding to the right side of navbar. */
+.navbar-section { padding: 0 1rem; }
